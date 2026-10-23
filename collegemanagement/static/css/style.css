@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f5f7fa;
+    color:#333;
+}
+
+/* ================= NAVBAR ================= */
+
+.custom-navbar{
+    background:#0b3d91;
+    padding:15px 0;
+    box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.navbar-brand{
+    color:#fff !important;
+    font-size:28px;
+    font-weight:700;
+}
+
+.nav-link{
+    color:#fff !important;
+    margin-left:15px;
+    font-weight:500;
+    transition:.3s;
+}
+
+.nav-link:hover{
+    color:#ffc107 !important;
+}
+
+.navbar-toggler{
+    border-color:white;
+}
+
+/* ================= HERO ================= */
+
+.hero-section{
+    background:linear-gradient(rgba(11,61,145,.85),rgba(11,61,145,.85)),
+    url("../images/college.jpg") center/cover no-repeat;
+    color:white;
+    padding:90px 0;
+}
+
+.hero-section h1{
+    font-weight:700;
+}
+
+.hero-image{
+    max-width:100%;
+    height:400px;
+    object-fit:cover;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,.3);
+}
+
+/* ================= BUTTONS ================= */
+
+.btn-warning{
+    background:#ffc107;
+    border:none;
+    color:#000;
+    font-weight:600;
+}
+
+.btn-warning:hover{
+    background:#ffb300;
+}
+
+.btn-outline-light:hover{
+    color:#0b3d91;
+}
+
+/* ================= FEATURES ================= */
+
+.feature-card{
+    background:white;
+    padding:30px 20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    transition:.3s;
+    height:100%;
+}
+
+.feature-card:hover{
+    transform:translateY(-8px);
+}
+
+.feature-card h4{
+    color:#0b3d91;
+    margin:15px 0;
+}
+
+.feature-card p{
+    color:#666;
+}
+
+/* ================= STATS ================= */
+
+.stats-section{
+    background:#0b3d91;
+}
+
+.stats-section h2{
+    font-size:42px;
+    font-weight:700;
+}
+
+.stats-section p{
+    font-size:18px;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+    background:#082b68;
+    color:white;
+    padding:40px 0;
+    margin-top:50px;
+}
+
+.footer h5{
+    font-weight:700;
+}
+
+.footer p{
+    color:#d9d9d9;
+}
+
+.footer a{
+    color:#ffc107;
+    font-size:22px;
+    text-decoration:none;
+}
+
+.footer a:hover{
+    color:white;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:991px){
+
+.hero-section{
+    text-align:center;
+}
+
+.hero-image{
+    margin-top:40px;
+    height:300px;
+}
+
+.nav-link{
+    margin-left:0;
+    padding:10px 0;
+}
+
+}
+
+@media(max-width:768px){
+
+.hero-section h1{
+    font-size:40px;
+}
+
+.hero-section p{
+    font-size:18px;
+}
+
+.stats-section h2{
+    font-size:32px;
+    margin-top:20px;
+}
+
+.feature-card{
+    margin-bottom:20px;
+}
+
+}

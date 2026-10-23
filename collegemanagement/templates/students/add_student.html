@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Add Student
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-10">
+
+            <div class="card shadow-lg border-0">
+
+                <div class="card-header bg-primary text-white p-4">
+
+                    <h2 class="mb-0">
+
+                        <i class="fas fa-user-plus"></i>
+
+                        Add New Student
+
+                    </h2>
+
+                </div>
+
+                <div class="card-body p-5">
+
+                    <form method="POST" enctype="multipart/form-data">
+
+                        {% csrf_token %}
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-bold">
+                                    Student ID
+                                </label>
+
+                                {{ form.student_id }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-bold">
+                                    First Name
+                                </label>
+
+                                {{ form.first_name }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-bold">
+                                    Last Name
+                                </label>
+
+                                {{ form.last_name }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-bold">
+                                    Email
+                                </label>
+
+                                {{ form.email }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-bold">
+                                    Phone Number
+                                </label>
+
+                                {{ form.phone }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-bold">
+                                    Gender
+                                </label>
+
+                                {{ form.gender }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-bold">
+                                    Date of Birth
+                                </label>
+
+                                {{ form.date_of_birth }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-bold">
+                                    Course
+                                </label>
+
+                                {{ form.course }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-bold">
+                                    Semester
+                                </label>
+
+                                {{ form.semester }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+
+                                <label class="form-label fw-bold">
+                                    Admission Date
+                                </label>
+
+                                {{ form.admission_date }}
+
+                            </div>
+
+                            <div class="col-md-12 mb-4">
+
+                                <label class="form-label fw-bold">
+                                    Address
+                                </label>
+
+                                {{ form.address }}
+
+                            </div>
+
+                            <div class="col-md-12 mb-4">
+
+                                <label class="form-label fw-bold">
+                                    Student Photo
+                                </label>
+
+                                {{ form.photo }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="text-center mt-4">
+
+                            <button type="submit"
+                                    class="btn btn-success btn-lg px-5">
+
+                                <i class="fas fa-save"></i>
+
+                                Save Student
+
+                            </button>
+
+                            <a href="{% url 'student_list' %}"
+                               class="btn btn-secondary btn-lg px-5">
+
+                                <i class="fas fa-arrow-left"></i>
+
+                                Back
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

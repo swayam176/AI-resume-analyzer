@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Edit Event
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-lg border-0">
+
+                <div class="card-header bg-warning text-dark">
+
+                    <h2 class="mb-0">
+
+                        <i class="fas fa-edit"></i>
+
+                        Edit Event
+
+                    </h2>
+
+                </div>
+
+                <div class="card-body p-5">
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                Event Title
+
+                            </label>
+
+                            {{ form.title }}
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                Event Type
+
+                            </label>
+
+                            {{ form.event_type }}
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                Description
+
+                            </label>
+
+                            {{ form.description }}
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                Venue
+
+                            </label>
+
+                            {{ form.venue }}
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-4 mb-4">
+
+                                <label class="form-label fw-bold">
+
+                                    Event Date
+
+                                </label>
+
+                                {{ form.event_date }}
+
+                            </div>
+
+                            <div class="col-md-4 mb-4">
+
+                                <label class="form-label fw-bold">
+
+                                    Start Time
+
+                                </label>
+
+                                {{ form.start_time }}
+
+                            </div>
+
+                            <div class="col-md-4 mb-4">
+
+                                <label class="form-label fw-bold">
+
+                                    End Time
+
+                                </label>
+
+                                {{ form.end_time }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                Organizer
+
+                            </label>
+
+                            {{ form.organizer }}
+
+                        </div>
+
+                        <div class="text-center mt-4">
+
+                            <button
+                                type="submit"
+                                class="btn btn-warning btn-lg px-5">
+
+                                <i class="fas fa-save"></i>
+
+                                Update Event
+
+                            </button>
+
+                            <a
+                                href="{% url 'event_list' %}"
+                                class="btn btn-secondary btn-lg px-5">
+
+                                <i class="fas fa-arrow-left"></i>
+
+                                Cancel
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

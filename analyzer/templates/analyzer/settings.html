@@ -1,0 +1,303 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — ResumeAI</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+        .settings-nav { padding: 20px; }
+        .settings-nav-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
+            padding: 0 8px;
+        }
+        .settings-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            margin-bottom: 2px;
+        }
+        .settings-nav-item:hover,
+        .settings-nav-item.active {
+            background: var(--primary-glow);
+            color: var(--primary);
+        }
+        .settings-main { display: flex; flex-direction: column; gap: 20px; }
+        .settings-card { padding: 28px 32px; }
+        .settings-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .settings-section-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(99,102,241,0.07);
+        }
+        .settings-row:last-child { border-bottom: none; }
+        .settings-row-label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .settings-row-desc  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .settings-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            background: var(--primary-glow);
+            padding: 5px 14px;
+            border-radius: 99px;
+        }
+        .skill-pill {
+            display: inline-block;
+            background: rgba(99,102,241,0.08);
+            color: var(--primary-dark);
+            border: 1px solid rgba(99,102,241,0.15);
+            padding: 5px 12px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 3px;
+        }
+        .skills-wrap { margin-top: 12px; }
+        .info-box {
+            display: flex;
+            gap: 12px;
+            background: rgba(99,102,241,0.06);
+            border: 1px solid rgba(99,102,241,0.15);
+            border-radius: var(--radius-md);
+            padding: 16px;
+        }
+        .info-box-icon { font-size: 20px; flex-shrink: 0; }
+        .info-box-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+        .info-box-text strong { color: var(--text-primary); }
+        @media (max-width: 768px) {
+            .settings-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="nav-brand">
+            <div class="nav-brand-icon">🤖</div>
+            <span class="nav-brand-name">ResumeAI</span>
+        </a>
+        <div class="nav-links">
+            <a href="{% url 'home' %}" class="nav-link">🏠 Dashboard</a>
+            <a href="{% url 'reports' %}" class="nav-link">📊 Reports</a>
+            <a href="{% url 'settings' %}" class="nav-link active">⚙️ Settings</a>
+        </div>
+        <div class="nav-right">
+            <a href="{% url 'home' %}" class="nav-btn">✨ New Analysis</a>
+        </div>
+    </nav>
+
+    <div class="page">
+
+        <div class="page-header fade-up">
+            <div class="page-header-top">
+                <h1 class="page-title">⚙️ Settings</h1>
+            </div>
+            <p class="page-subtitle">Application configuration and system information.</p>
+        </div>
+
+        <div class="settings-grid">
+
+            <!-- SIDE NAV -->
+            <div class="glass-card settings-nav fade-up delay-1">
+                <div class="settings-nav-title">Configuration</div>
+                <a href="#analysis" class="settings-nav-item active">🔬 Analysis Settings</a>
+                <a href="#skills"   class="settings-nav-item">🎯 Tracked Skills</a>
+                <a href="#system"   class="settings-nav-item">🖥️ System Info</a>
+                <a href="#about"    class="settings-nav-item">ℹ️ About</a>
+            </div>
+
+            <div class="settings-main">
+
+                <!-- ANALYSIS SETTINGS -->
+                <div class="glass-card settings-card fade-up delay-1" id="analysis">
+                    <div class="settings-section-title">🔬 Analysis Settings</div>
+                    <div class="settings-section-desc">Current configuration used for resume scoring.</div>
+
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-row-label">Skill Match Weight</div>
+                            <div class="settings-row-desc">Contribution of skill matching to overall score</div>
+                        </div>
+                        <span class="settings-value">70%</span>
+                    </div>
+
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-row-label">NLP Similarity Weight</div>
+                            <div class="settings-row-desc">Contribution of TF-IDF cosine similarity to overall score</div>
+                        </div>
+                        <span class="settings-value">30%</span>
+                    </div>
+
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-row-label">Accepted File Types</div>
+                            <div class="settings-row-desc">Resume file formats supported for parsing</div>
+                        </div>
+                        <span class="settings-value">PDF only</span>
+                    </div>
+
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-row-label">NLP Vectorizer</div>
+                            <div class="settings-row-desc">Algorithm used to compute text similarity</div>
+                        </div>
+                        <span class="settings-value">TF-IDF</span>
+                    </div>
+
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-row-label">Similarity Metric</div>
+                            <div class="settings-row-desc">Distance function for comparing document vectors</div>
+                        </div>
+                        <span class="settings-value">Cosine</span>
+                    </div>
+                </div>
+
+                <!-- TRACKED SKILLS -->
+                <div class="glass-card settings-card fade-up delay-2" id="skills">
+                    <div class="settings-section-title">🎯 Tracked Skills</div>
+                    <div class="settings-section-desc">These are the skills the analyzer currently detects from resumes and job descriptions.</div>
+
+                    <div class="skills-wrap">
+                        {% for skill in skills_list %}
+                            <span class="skill-pill">{{ skill }}</span>
+                        {% empty %}
+                            <span class="skill-pill">Python</span>
+                            <span class="skill-pill">C++</span>
+                            <span class="skill-pill">Java</span>
+                            <span class="skill-pill">C</span>
+                            <span class="skill-pill">SQL</span>
+                            <span class="skill-pill">MySQL</span>
+                            <span class="skill-pill">PostgreSQL</span>
+                            <span class="skill-pill">Django</span>
+                            <span class="skill-pill">HTML</span>
+                            <span class="skill-pill">CSS</span>
+                            <span class="skill-pill">JavaScript</span>
+                            <span class="skill-pill">REST API</span>
+                            <span class="skill-pill">Pandas</span>
+                            <span class="skill-pill">NumPy</span>
+                            <span class="skill-pill">Matplotlib</span>
+                            <span class="skill-pill">Seaborn</span>
+                            <span class="skill-pill">Data Science</span>
+                            <span class="skill-pill">Machine Learning</span>
+                            <span class="skill-pill">Deep Learning</span>
+                            <span class="skill-pill">AI</span>
+                            <span class="skill-pill">scikit-learn</span>
+                            <span class="skill-pill">TensorFlow</span>
+                            <span class="skill-pill">PyTorch</span>
+                            <span class="skill-pill">OpenCV</span>
+                            <span class="skill-pill">Computer Vision</span>
+                            <span class="skill-pill">Git</span>
+                            <span class="skill-pill">GitHub</span>
+                            <span class="skill-pill">Excel</span>
+                            <span class="skill-pill">Power BI</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- SYSTEM INFO -->
+                <div class="glass-card settings-card fade-up delay-3" id="system">
+                    <div class="settings-section-title">🖥️ System Info</div>
+                    <div class="settings-section-desc">Runtime environment and dependencies.</div>
+
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-row-label">Framework</div>
+                            <div class="settings-row-desc">Backend web framework</div>
+                        </div>
+                        <span class="settings-value">Django 6.0.6</span>
+                    </div>
+
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-row-label">Language</div>
+                            <div class="settings-row-desc">Programming language version</div>
+                        </div>
+                        <span class="settings-value">Python 3.13</span>
+                    </div>
+
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-row-label">PDF Parser</div>
+                            <div class="settings-row-desc">Library used to extract text from PDFs</div>
+                        </div>
+                        <span class="settings-value">PyMuPDF</span>
+                    </div>
+
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-row-label">ML Library</div>
+                            <div class="settings-row-desc">Library used for NLP text vectorization</div>
+                        </div>
+                        <span class="settings-value">scikit-learn</span>
+                    </div>
+
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-row-label">Database</div>
+                            <div class="settings-row-desc">Storage backend for analysis history</div>
+                        </div>
+                        <span class="settings-value">SQLite3</span>
+                    </div>
+                </div>
+
+                <!-- ABOUT -->
+                <div class="glass-card settings-card fade-up delay-4" id="about">
+                    <div class="settings-section-title">ℹ️ About ResumeAI</div>
+                    <div class="settings-section-desc">Project information and tech stack.</div>
+                    <div class="info-box">
+                        <span class="info-box-icon">🤖</span>
+                        <div class="info-box-text">
+                            <strong>ResumeAI</strong> is an AI-powered resume analyzer that uses
+                            Natural Language Processing to compare your resume against job descriptions.
+                            It extracts technical skills, calculates TF-IDF cosine similarity, and
+                            provides an overall match score with detailed skill gap analysis to help
+                            you tailor your resume for any job.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="footer fade-up">
+            <strong>ResumeAI</strong> &nbsp;·&nbsp; Powered by Python · Django · NLP · scikit-learn
+        </div>
+
+    </div>
+
+</body>
+</html>

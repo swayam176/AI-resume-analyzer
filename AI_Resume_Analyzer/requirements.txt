@@ -1,0 +1,3 @@
+django
+pymupdf
+scikit-learn

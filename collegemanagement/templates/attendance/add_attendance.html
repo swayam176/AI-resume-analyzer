@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Add Attendance
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-lg border-0">
+
+                <div class="card-header bg-primary text-white p-4">
+
+                    <h2 class="mb-0">
+
+                        <i class="fas fa-calendar-plus"></i>
+
+                        Add Attendance
+
+                    </h2>
+
+                </div>
+
+                <div class="card-body p-5">
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                Student
+
+                            </label>
+
+                            {{ form.student }}
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                Date
+
+                            </label>
+
+                            {{ form.date }}
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                Attendance Status
+
+                            </label>
+
+                            {{ form.status }}
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                Remarks
+
+                            </label>
+
+                            {{ form.remarks }}
+
+                        </div>
+
+                        <div class="text-center mt-5">
+
+                            <button
+                                type="submit"
+                                class="btn btn-success btn-lg px-5">
+
+                                <i class="fas fa-save"></i>
+
+                                Save Attendance
+
+                            </button>
+
+                            <a
+                                href="{% url 'attendance_list' %}"
+                                class="btn btn-secondary btn-lg px-5">
+
+                                <i class="fas fa-arrow-left"></i>
+
+                                Back
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,211 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer — Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text">Analyzing your resume...</p>
+        <p class="loading-sub">This may take a few seconds</p>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="{% url 'home' '}" class="nav-brand">
+            <div class="nav-brand-icon">🤖</div>
+            <span class="nav-brand-name">ResumeAI</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="{% url 'home' '}" class="nav-link active">🏠 Dashboard</a>
+            <a href="{% url 'reports' %}" class="nav-link">📊 Reports</a>
+            <a href="{% url 'settings' %}" class="nav-link">⚙️ Settings</a>
+        </div>
+
+        <div class="nav-right">
+            <a href="{% url 'home' %}" class="nav-btn">✨ New Analysis</a>
+        </div>
+    </nav>
+
+    <!-- PAGE -->
+    <div class="page">
+
+        <div class="page-header fade-up">
+            <div class="page-header-top">
+                <h1 class="page-title">Analysis Dashboard</h1>
+            </div>
+            <p class="page-subtitle">Upload your resume and paste a job description to get an instant AI-powered match score.</p>
+        </div>
+
+        <div class="home-grid">
+
+            <!-- LEFT PANEL -->
+            <div class="left-panel">
+
+                <div class="glass-card hero-card fade-up delay-1">
+                    <div class="hero-badge">⚡ AI & NLP Powered</div>
+                    <h2 class="hero-title">Match Your Resume to <span>Any Job</span> Instantly</h2>
+                    <p class="hero-desc">
+                        Our AI analyzes your resume against the job description using NLP,
+                        TF-IDF similarity, and skill extraction to give you a precise match score.
+                    </p>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <span class="stat-value">98%</span>
+                            <span class="stat-label">Accuracy</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">30+</span>
+                            <span class="stat-label">Skills Tracked</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">&lt;5s</span>
+                            <span class="stat-label">Analysis Time</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="features-grid fade-up delay-2">
+                    <div class="glass-card feature-mini">
+                        <span class="feature-mini-icon">📄</span>
+                        <h4>Resume Parsing</h4>
+                        <p>Extracts text and skills from your PDF resume automatically.</p>
+                    </div>
+                    <div class="glass-card feature-mini">
+                        <span class="feature-mini-icon">🧠</span>
+                        <h4>NLP Similarity</h4>
+                        <p>TF-IDF & cosine similarity to compare resume vs job description.</p>
+                    </div>
+                    <div class="glass-card feature-mini">
+                        <span class="feature-mini-icon">🎯</span>
+                        <h4>Skill Gap Analysis</h4>
+                        <p>Identifies matching and missing skills from job requirements.</p>
+                    </div>
+                    <div class="glass-card feature-mini">
+                        <span class="feature-mini-icon">📈</span>
+                        <h4>Score Breakdown</h4>
+                        <p>Detailed scores for skill match, NLP fit, and overall match.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT PANEL — FORM -->
+            <div class="glass-card form-card fade-up delay-2">
+
+                <div class="form-card-header">
+                    <h2 class="form-card-title">🚀 Start Analysis</h2>
+                    <span class="form-card-badge">✓ PDF Supported</span>
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="error-box">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <form method="POST" enctype="multipart/form-data" id="analysisForm">
+                    {% csrf_token %}
+
+                    <!-- FILE UPLOAD -->
+                    <div class="form-group">
+                        <div class="field-label">
+                            <span>📎</span> Resume PDF
+                        </div>
+
+                        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('resumeInput').click()">
+                            <span class="upload-icon" id="uploadIcon">📂</span>
+                            <h4 id="uploadTitle">Drop your resume here</h4>
+                            <p>Supports PDF files only · Max 10MB</p>
+                            <label class="upload-btn" onclick="event.stopPropagation()">
+                                📁 Browse File
+                                <input type="file" id="resumeInput" name="{{ form.resume.html_name }}" accept=".pdf">
+                            </label>
+                            <div class="file-name-display" id="fileNameDisplay"></div>
+                        </div>
+
+                        {% if form.resume.errors %}
+                            <div class="field-error">{{ form.resume.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- JOB DESCRIPTION -->
+                    <div class="form-group">
+                        <div class="field-label">
+                            <span>📝</span> Job Description
+                        </div>
+                        <textarea
+                            class="form-textarea"
+                            name="{{ form.job_description.html_name }}"
+                            placeholder="Paste the full job description here — include required skills, responsibilities, and qualifications..."
+                            rows="10">{{ form.job_description.value|default:'' }}</textarea>
+
+                        {% if form.job_description.errors %}
+                            <div class="field-error">{{ form.job_description.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span>⚡</span> Analyze Resume
+                    </button>
+
+                </form>
+            </div>
+
+        </div>
+
+        <div class="footer fade-up delay-4">
+            <strong>ResumeAI</strong> &nbsp;·&nbsp; Powered by Python · Django · NLP · scikit-learn
+        </div>
+
+    </div>
+
+    <script>
+        // File upload UX
+        const input    = document.getElementById('resumeInput');
+        const zone     = document.getElementById('uploadZone');
+        const icon     = document.getElementById('uploadIcon');
+        const title    = document.getElementById('uploadTitle');
+        const display  = document.getElementById('fileNameDisplay');
+
+        input.addEventListener('change', () => {
+            if (input.files.length) {
+                const name = input.files[0].name;
+                icon.textContent  = '✅';
+                title.textContent = 'Resume selected';
+                display.textContent = name;
+                display.style.display = 'block';
+                zone.style.borderColor = '#10b981';
+                zone.style.background  = 'rgba(16,185,129,0.05)';
+            }
+        });
+
+        // Drag & drop
+        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+        zone.addEventListener('drop', e => {
+            e.preventDefault();
+            zone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                input.files = dt.files;
+                input.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // Loading overlay on submit
+        document.getElementById('analysisForm').addEventListener('submit', () => {
+            document.getElementById('loadingOverlay').classList.add('active');
+        });
+    </script>
+
+</body>
+</html>
+

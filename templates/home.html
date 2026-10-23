@@ -1,0 +1,192 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI Resume Analyzer</title>
+
+    <link rel="stylesheet"
+          href="{% static 'css/style.css' %}">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="container">
+
+            <div class="logo">
+                AI Resume Analyzer
+            </div>
+
+            <div class="nav-text">
+                AI & NLP Powered
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <main class="container">
+
+        <section class="hero">
+
+            <h1>
+                AI Resume Analyzer
+            </h1>
+
+            <p>
+                Analyze your resume against a job description
+                using NLP and skill matching.
+            </p>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>
+                Analyze Your Resume
+            </h2>
+
+            <p class="description">
+                Upload your resume PDF and paste the job
+                description to get an analysis.
+            </p>
+
+
+            {% if form.non_field_errors %}
+
+                <div class="error-box">
+
+                    {{ form.non_field_errors }}
+
+                </div>
+
+            {% endif %}
+
+
+            <form method="POST"
+                  enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.resume.id_for_label }}">
+                        Resume PDF
+                    </label>
+
+                    {{ form.resume }}
+
+                    {% if form.resume.errors %}
+
+                        <div class="field-error">
+                            {{ form.resume.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.job_description.id_for_label }}">
+                        Job Description
+                    </label>
+
+                    {{ form.job_description }}
+
+                    {% if form.job_description.errors %}
+
+                        <div class="field-error">
+                            {{ form.job_description.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <button type="submit"
+                        class="analyze-button">
+
+                    Analyze Resume
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <section class="features">
+
+            <div class="feature-card">
+
+                <h3>
+                    📄 Resume Analysis
+                </h3>
+
+                <p>
+                    Extract important information and
+                    technical skills from your resume.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <h3>
+                    🧠 NLP Analysis
+                </h3>
+
+                <p>
+                    Compare resume and job description
+                    using TF-IDF and cosine similarity.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <h3>
+                    🎯 Skill Gap
+                </h3>
+
+                <p>
+                    Identify matching and missing skills
+                    from the job requirements.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            AI Resume Analyzer | Python • Django • NLP
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

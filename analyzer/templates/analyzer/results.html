@@ -1,0 +1,622 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results — ResumeAI</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* ── RESULTS PAGE SCOPED STYLES ── */
+
+        .score-cards-row {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .score-card-new {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(99,102,241,0.10);
+            padding: 24px 16px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .score-card-new:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 40px rgba(99,102,241,0.15);
+        }
+
+        .score-card-new::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .score-card-new.c-indigo::before { background: linear-gradient(90deg,#6366f1,#a78bfa); }
+        .score-card-new.c-green::before  { background: linear-gradient(90deg,#10b981,#34d399); }
+        .score-card-new.c-orange::before { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+        .score-card-new.c-purple::before { background: linear-gradient(90deg,#8b5cf6,#c4b5fd); }
+
+        .sc-icon { font-size: 26px; margin-bottom: 10px; display: block; }
+
+        .sc-value {
+            font-size: 36px;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 6px;
+            letter-spacing: -1px;
+        }
+
+        .score-card-new.c-indigo .sc-value { color: #6366f1; }
+        .score-card-new.c-green  .sc-value { color: #10b981; }
+        .score-card-new.c-orange .sc-value { color: #f59e0b; }
+        .score-card-new.c-purple .sc-value { color: #8b5cf6; }
+
+        .sc-label { font-size: 13px; font-weight: 700; color: #1e1b4b; margin-bottom: 3px; }
+        .sc-sub   { font-size: 11px; color: #9ca3af; }
+
+        .sc-bar-track {
+            height: 5px;
+            background: rgba(99,102,241,0.1);
+            border-radius: 99px;
+            margin-top: 14px;
+            overflow: hidden;
+        }
+
+        .sc-bar-fill {
+            height: 100%;
+            border-radius: 99px;
+            width: 0;
+            transition: width 1.3s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .score-card-new.c-indigo .sc-bar-fill { background: linear-gradient(90deg,#6366f1,#a78bfa); }
+        .score-card-new.c-green  .sc-bar-fill { background: linear-gradient(90deg,#10b981,#34d399); }
+        .score-card-new.c-orange .sc-bar-fill { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+        .score-card-new.c-purple .sc-bar-fill { background: linear-gradient(90deg,#8b5cf6,#c4b5fd); }
+
+        /* Layout */
+        .results-body {
+            display: grid;
+            grid-template-columns: 1fr 285px;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .results-col-main {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 0;
+        }
+
+        .results-col-side {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 0;
+        }
+
+        /* Content cards */
+        .rcard {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(99,102,241,0.09);
+            padding: 22px 24px;
+            overflow: hidden;
+        }
+
+        .rcard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(99,102,241,0.08);
+        }
+
+        .rcard-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e1b4b;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .rcard-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 99px;
+        }
+
+        .badge-blue   { background: rgba(99,102,241,0.10); color: #4f46e5; }
+        .badge-green  { background: rgba(16,185,129,0.10); color: #065f46; }
+        .badge-red    { background: rgba(239,68,68,0.10);  color: #991b1b; }
+        .badge-orange { background: rgba(245,158,11,0.10); color: #92400e; }
+
+        .skills-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .skills-split-col h4 {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        /* Pills */
+        .pill-row { display: flex; flex-wrap: wrap; gap: 7px; }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: transform 0.15s;
+            white-space: nowrap;
+        }
+
+        .pill:hover { transform: scale(1.05); }
+        .pill-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+        .pill.p-blue   { background: rgba(99,102,241,0.09); color: #4f46e5; border: 1px solid rgba(99,102,241,0.18); }
+        .pill.p-green  { background: rgba(16,185,129,0.09); color: #065f46; border: 1px solid rgba(16,185,129,0.2);  }
+        .pill.p-red    { background: rgba(239,68,68,0.08);  color: #991b1b; border: 1px solid rgba(239,68,68,0.18);  }
+
+        .pill-dot.d-blue  { background: #6366f1; }
+        .pill-dot.d-green { background: #10b981; }
+        .pill-dot.d-red   { background: #ef4444; }
+
+        .empty-msg { text-align: center; padding: 18px 12px; color: #9ca3af; font-size: 13px; }
+        .empty-msg span { font-size: 24px; display: block; margin-bottom: 6px; }
+
+        /* Sidebar card */
+        .scard {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(99,102,241,0.09);
+            padding: 18px 20px;
+            overflow: hidden;
+        }
+
+        .scard-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e1b4b;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding-bottom: 11px;
+            border-bottom: 1px solid rgba(99,102,241,0.08);
+        }
+
+        .sbar-item { margin-bottom: 13px; }
+        .sbar-item:last-child { margin-bottom: 0; }
+
+        .sbar-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .sbar-name { font-size: 12px; font-weight: 600; color: #374151; }
+        .sbar-val  { font-size: 12px; font-weight: 700; color: #6366f1; }
+
+        .sbar-track { height: 6px; background: rgba(99,102,241,0.1); border-radius: 99px; overflow: hidden; }
+        .sbar-fill  {
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg,#6366f1,#a78bfa);
+            width: 0;
+            transition: width 1.3s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .stats-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        .smi {
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+        }
+
+        .smi.s-indigo { background: rgba(99,102,241,0.07); }
+        .smi.s-green  { background: rgba(16,185,129,0.07); }
+        .smi.s-red    { background: rgba(239,68,68,0.07);  }
+        .smi.s-purple { background: rgba(139,92,246,0.07); }
+
+        .smi-val {
+            font-size: 22px;
+            font-weight: 900;
+            display: block;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .smi.s-indigo .smi-val { color: #6366f1; }
+        .smi.s-green  .smi-val { color: #10b981; }
+        .smi.s-red    .smi-val { color: #ef4444; }
+        .smi.s-purple .smi-val { color: #8b5cf6; }
+
+        .smi-label { font-size: 10px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.4px; }
+
+        .rec-items { display: flex; flex-direction: column; gap: 8px; }
+
+        .rec-new {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 10px 11px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #374151;
+            line-height: 1.5;
+        }
+
+        .rec-new.warn { background: rgba(245,158,11,0.07); border-left: 3px solid #f59e0b; }
+        .rec-new.ok   { background: rgba(16,185,129,0.07); border-left: 3px solid #10b981;  }
+        .rec-new .ri  { flex-shrink: 0; font-size: 13px; }
+
+        .fit-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .fit-badge.fb-great { background: rgba(16,185,129,0.12); color: #065f46; }
+        .fit-badge.fb-good  { background: rgba(99,102,241,0.12); color: #4f46e5; }
+        .fit-badge.fb-fair  { background: rgba(245,158,11,0.12); color: #92400e; }
+
+        .fit-desc { font-size: 12px; color: #6b7280; line-height: 1.5; }
+
+        .back-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 12px;
+            padding-bottom: 8px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(99,102,241,0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(99,102,241,0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .score-cards-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .results-body    { grid-template-columns: 1fr; }
+            .results-col-side { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        }
+
+        @media (max-width: 700px) {
+            .score-cards-row { gap: 10px; }
+            .sc-value { font-size: 28px; }
+            .skills-split { grid-template-columns: 1fr; }
+            .results-col-side { grid-template-columns: 1fr; }
+            .stats-mini { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .stats-mini { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="nav-brand">
+            <div class="nav-brand-icon">🤖</div>
+            <span class="nav-brand-name">ResumeAI</span>
+        </a>
+        <div class="nav-links">
+            <a href="{% url 'home' %}" class="nav-link">🏠 Dashboard</a>
+            <a href="{% url 'reports' %}" class="nav-link">📊 Reports</a>
+            <a href="{% url 'settings' %}" class="nav-link">⚙️ Settings</a>
+        </div>
+        <div class="nav-right">
+            <a href="{% url 'home' %}" class="nav-btn">✨ New Analysis</a>
+        </div>
+    </nav>
+
+    <div class="page">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header fade-up">
+            <div class="page-header-top">
+                <h1 class="page-title">📋 Analysis Results</h1>
+                <a href="{% url 'home' %}" class="btn btn-outline">← New Analysis</a>
+            </div>
+            <p class="page-subtitle">Here is how your resume matches with the provided job description.</p>
+        </div>
+
+        <!-- SCORE CARDS ROW -->
+        <div class="score-cards-row fade-up delay-1">
+
+            <div class="score-card-new c-indigo">
+                <span class="sc-icon">🎯</span>
+                <div class="sc-value" data-target="{{ analysis.overall_score }}">0</div>
+                <div class="sc-label">Overall Score</div>
+                <div class="sc-sub">Combined match rating</div>
+                <div class="sc-bar-track"><div class="sc-bar-fill" data-width="{{ analysis.overall_score }}"></div></div>
+            </div>
+
+            <div class="score-card-new c-green">
+                <span class="sc-icon">🔬</span>
+                <div class="sc-value" data-target="{{ analysis.skill_match_score }}">0</div>
+                <div class="sc-label">Skill Match</div>
+                <div class="sc-sub">Skills matched %</div>
+                <div class="sc-bar-track"><div class="sc-bar-fill" data-width="{{ analysis.skill_match_score }}"></div></div>
+            </div>
+
+            <div class="score-card-new c-orange">
+                <span class="sc-icon">🧠</span>
+                <div class="sc-value" data-target="{{ analysis.text_similarity_score }}">0</div>
+                <div class="sc-label">NLP Similarity</div>
+                <div class="sc-sub">Text cosine similarity</div>
+                <div class="sc-bar-track"><div class="sc-bar-fill" data-width="{{ analysis.text_similarity_score }}"></div></div>
+            </div>
+
+            <div class="score-card-new c-purple">
+                <span class="sc-icon">💼</span>
+                <div class="sc-value" style="font-size:22px; padding-top:6px; letter-spacing:0;">
+                    {% if analysis.overall_score >= 75 %}Great
+                    {% elif analysis.overall_score >= 50 %}Good
+                    {% else %}Fair{% endif %}
+                </div>
+                <div class="sc-label">Job Fit</div>
+                <div class="sc-sub">Overall suitability</div>
+                <div class="sc-bar-track"><div class="sc-bar-fill" data-width="{{ analysis.overall_score }}"></div></div>
+            </div>
+
+        </div>
+
+        <!-- MAIN + SIDEBAR -->
+        <div class="results-body">
+
+            <!-- MAIN COLUMN -->
+            <div class="results-col-main">
+
+                <!-- Skill Breakdown -->
+                <div class="rcard fade-up delay-2">
+                    <div class="rcard-header">
+                        <div class="rcard-title">🔬 Skill Breakdown</div>
+                        <span class="rcard-badge badge-blue">{{ analysis.resume_skills|length }} resume skills detected</span>
+                    </div>
+                    <div class="skills-split">
+                        <div class="skills-split-col">
+                            <h4>✅ Matching ({{ analysis.matching_skills|length }})</h4>
+                            <div class="pill-row">
+                                {% for skill in analysis.matching_skills %}
+                                    <span class="pill p-green"><span class="pill-dot d-green"></span>{{ skill }}</span>
+                                {% empty %}
+                                    <div class="empty-msg"><span>😕</span>No matching skills</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="skills-split-col">
+                            <h4>❌ Missing ({{ analysis.missing_skills|length }})</h4>
+                            <div class="pill-row">
+                                {% for skill in analysis.missing_skills %}
+                                    <span class="pill p-red"><span class="pill-dot d-red"></span>{{ skill }}</span>
+                                {% empty %}
+                                    <div class="empty-msg"><span>🎉</span>No missing skills!</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resume Skills -->
+                <div class="rcard fade-up delay-2">
+                    <div class="rcard-header">
+                        <div class="rcard-title">📄 Resume Skills</div>
+                        <span class="rcard-badge badge-blue">{{ analysis.resume_skills|length }} found</span>
+                    </div>
+                    <div class="pill-row">
+                        {% for skill in analysis.resume_skills %}
+                            <span class="pill p-blue"><span class="pill-dot d-blue"></span>{{ skill }}</span>
+                        {% empty %}
+                            <div class="empty-msg"><span>📭</span>No supported skills detected in resume.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Job Required Skills -->
+                <div class="rcard fade-up delay-3">
+                    <div class="rcard-header">
+                        <div class="rcard-title">💼 Job Required Skills</div>
+                        <span class="rcard-badge badge-orange">{{ analysis.job_skills|length }} required</span>
+                    </div>
+                    <div class="pill-row">
+                        {% for skill in analysis.job_skills %}
+                            <span class="pill {% if skill in analysis.matching_skills %}p-green{% else %}p-red{% endif %}">
+                                <span class="pill-dot {% if skill in analysis.matching_skills %}d-green{% else %}d-red{% endif %}"></span>
+                                {{ skill }}
+                            </span>
+                        {% empty %}
+                            <div class="empty-msg"><span>📭</span>No skills detected in job description.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SIDEBAR -->
+            <div class="results-col-side">
+
+                <!-- Job Fit Summary -->
+                <div class="scard fade-up delay-2">
+                    <div class="scard-title">⭐ Job Fit Summary</div>
+                    {% if analysis.overall_score >= 75 %}
+                        <div class="fit-badge fb-great">🚀 Great Fit</div>
+                        <p class="fit-desc">Your resume is an excellent match. You have most of the required skills.</p>
+                    {% elif analysis.overall_score >= 50 %}
+                        <div class="fit-badge fb-good">👍 Good Fit</div>
+                        <p class="fit-desc">A decent match. Address the missing skills to improve your chances.</p>
+                    {% else %}
+                        <div class="fit-badge fb-fair">⚠️ Fair Fit</div>
+                        <p class="fit-desc">Noticeable gap between your profile and the requirements. Work on the missing skills.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Score Breakdown Bars -->
+                <div class="scard fade-up delay-2">
+                    <div class="scard-title">📊 Score Breakdown</div>
+                    <div class="sbar-item">
+                        <div class="sbar-top">
+                            <span class="sbar-name">Skill Match</span>
+                            <span class="sbar-val">{{ analysis.skill_match_score }}%</span>
+                        </div>
+                        <div class="sbar-track"><div class="sbar-fill" data-width="{{ analysis.skill_match_score }}"></div></div>
+                    </div>
+                    <div class="sbar-item">
+                        <div class="sbar-top">
+                            <span class="sbar-name">NLP Similarity</span>
+                            <span class="sbar-val">{{ analysis.text_similarity_score }}%</span>
+                        </div>
+                        <div class="sbar-track"><div class="sbar-fill" data-width="{{ analysis.text_similarity_score }}"></div></div>
+                    </div>
+                    <div class="sbar-item">
+                        <div class="sbar-top">
+                            <span class="sbar-name">Overall Score</span>
+                            <span class="sbar-val">{{ analysis.overall_score }}%</span>
+                        </div>
+                        <div class="sbar-track"><div class="sbar-fill" data-width="{{ analysis.overall_score }}"></div></div>
+                    </div>
+                </div>
+
+                <!-- Analysis Stats -->
+                <div class="scard fade-up delay-3">
+                    <div class="scard-title">⚡ Analysis Stats</div>
+                    <div class="stats-mini">
+                        <div class="smi s-indigo">
+                            <span class="smi-val">{{ analysis.resume_skills|length }}</span>
+                            <span class="smi-label">Resume</span>
+                        </div>
+                        <div class="smi s-green">
+                            <span class="smi-val">{{ analysis.matching_skills|length }}</span>
+                            <span class="smi-label">Matching</span>
+                        </div>
+                        <div class="smi s-red">
+                            <span class="smi-val">{{ analysis.missing_skills|length }}</span>
+                            <span class="smi-label">Missing</span>
+                        </div>
+                        <div class="smi s-purple">
+                            <span class="smi-val">{{ analysis.job_skills|length }}</span>
+                            <span class="smi-label">Job Skills</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="scard fade-up delay-4">
+                    <div class="scard-title">💡 Recommendations</div>
+                    <div class="rec-items">
+                        {% if analysis.missing_skills %}
+                            {% for skill in analysis.missing_skills %}
+                                <div class="rec-new warn">
+                                    <span class="ri">📌</span>
+                                    <span>Learn or strengthen <strong>{{ skill }}</strong> to boost your match.</span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="rec-new ok">
+                                <span class="ri">🎉</span>
+                                <span>All detected job skills are present in your resume. Great work!</span>
+                            </div>
+                        {% endif %}
+                        {% if analysis.overall_score < 50 %}
+                            <div class="rec-new warn">
+                                <span class="ri">✍️</span>
+                                <span>Tailor your resume language to better match the job description keywords.</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- BACK BUTTON -->
+        <div class="back-row fade-up delay-4">
+            <a href="{% url 'home' %}" class="back-btn">✨ Analyze Another Resume</a>
+        </div>
+
+        <div class="footer fade-up delay-4">
+            <strong>ResumeAI</strong> &nbsp;·&nbsp; Powered by Python · Django · NLP · scikit-learn
+        </div>
+
+    </div>
+
+    <script>
+        // Count-up animation for score numbers
+        document.querySelectorAll('.sc-value[data-target]').forEach(el => {
+            const target = parseFloat(el.dataset.target) || 0;
+            const duration = 1200;
+            const start = performance.now();
+            function step(now) {
+                const progress = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = target * eased;
+                el.textContent = Number.isInteger(target) ? Math.round(current) : current.toFixed(1);
+                if (progress < 1) requestAnimationFrame(step);
+                else el.textContent = Number.isInteger(target) ? target : target.toFixed(1);
+            }
+            requestAnimationFrame(step);
+        });
+
+        // Animate progress bars
+        setTimeout(() => {
+            document.querySelectorAll('[data-width]').forEach(bar => {
+                bar.style.width = (parseFloat(bar.dataset.width) || 0) + '%';
+            });
+        }, 200);
+    </script>
+
+</body>
+</html>
